@@ -17,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import com.artur.types.CategoryType;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -91,7 +93,9 @@ public class ProductServiceImpl implements ProductService {
         UserOrder userOrder = getActiveOrderByUserId(userId);
         Product product = productRepository.findById(productId).get();
         userOrder.setAmount(userOrder.getAmount() + product.getPrice());
-        userOrder.addProduct(product);
+        Set<Product> newProduct = new HashSet<>();
+        newProduct.add(product);
+        userOrder.setProducts(newProduct);
         userOrderRepository.save(userOrder);
     }
 
@@ -100,7 +104,9 @@ public class ProductServiceImpl implements ProductService {
         UserOrder userOrder = getActiveOrderByUserId(userId);
         Product product = productRepository.findById(productId).get();
         userOrder.setAmount(userOrder.getAmount() - product.getPrice());
-        userOrder.removeProduct(product);
+        Set<Product> setProducts = userOrder.getProducts();
+        setProducts.remove(product);
+        userOrder.setProducts(setProducts);
         userOrderRepository.save(userOrder);
     }
 

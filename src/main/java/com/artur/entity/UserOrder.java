@@ -1,7 +1,5 @@
 package com.artur.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,11 +33,9 @@ public class UserOrder extends AbstractEntity{
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.MERGE})
-    @JoinTable(name = "order_product",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
+    @JoinTable(name = "order_product", joinColumns = @JoinColumn(name = "orders_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "products_id" , referencedColumnName = "id"))
     private Set<Product> products;
+
 
     @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name = "status_id")
@@ -49,14 +45,5 @@ public class UserOrder extends AbstractEntity{
 
     public UserOrder(Account account) {
         this.setAccount(account);
-    }
-
-    public void addProduct(Product product){
-        this.products.add(product);
-        product.getUserOrders().add(this);
-    }
-    public void removeProduct(Product product){
-        this.products.remove(product);
-        product.getUserOrders().remove(this);
     }
 }

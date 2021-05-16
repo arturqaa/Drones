@@ -132,10 +132,10 @@
         </createTable>
 
         <createTable tableName="order_product" remarks="Pictures">
-            <column name="order_id" type="bigint" remarks="Foreign key to userOrder">
+            <column name="orders_id" type="bigint" remarks="Foreign key to userOrder">
                 <constraints foreignKeyName="fk_order_id" references="user_order(id)"/>
             </column>
-            <column name="product_id" type="bigint" remarks="Foreign key to product">
+            <column name="products_id" type="bigint" remarks="Foreign key to product">
                 <constraints foreignKeyName="fk_product_id" references="product(id)"/>
             </column>
         </createTable>

@@ -27,8 +27,8 @@ public class Product extends AbstractEntity{
     @Column(name = "price")
     private Long price;
 
-
-    @ManyToMany(mappedBy = "products")
+    @ManyToMany
+    @JoinTable(name = "order_product", joinColumns = @JoinColumn(name = "products_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "orders_id" , referencedColumnName = "id"))
     private Set<UserOrder> userOrders;
 
     @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
