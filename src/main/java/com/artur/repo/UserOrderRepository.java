@@ -1,5 +1,6 @@
 package com.artur.repo;
 
+import com.artur.entity.Account;
 import com.artur.entity.Status;
 import com.artur.entity.UserOrder;
 import com.artur.types.StatusType;
@@ -12,6 +13,6 @@ public interface UserOrderRepository extends JpaRepository<UserOrder,Long>, JpaS
 
     Optional<UserOrder> findAllByAccountId(Long id);
 
-    Optional<UserOrder> findAllByStatusAndAccountId(Status status, Long id);
+    Optional<UserOrder> findAllByStatusAndAccount(Status status, Account account);
 
 }

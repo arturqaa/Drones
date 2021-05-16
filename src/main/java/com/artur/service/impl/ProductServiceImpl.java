@@ -93,9 +93,7 @@ public class ProductServiceImpl implements ProductService {
         UserOrder userOrder = getActiveOrderByUserId(userId);
         Product product = productRepository.findById(productId).get();
         userOrder.setAmount(userOrder.getAmount() + product.getPrice());
-        Set<Product> newProduct = new HashSet<>();
-        newProduct.add(product);
-        userOrder.setProducts(newProduct);
+        userOrder.addProduct(product);
         userOrderRepository.save(userOrder);
     }
 
@@ -104,9 +102,7 @@ public class ProductServiceImpl implements ProductService {
         UserOrder userOrder = getActiveOrderByUserId(userId);
         Product product = productRepository.findById(productId).get();
         userOrder.setAmount(userOrder.getAmount() - product.getPrice());
-        Set<Product> setProducts = userOrder.getProducts();
-        setProducts.remove(product);
-        userOrder.setProducts(setProducts);
+        userOrder.deleteProduct(product);
         userOrderRepository.save(userOrder);
     }
 

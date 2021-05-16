@@ -25,4 +25,5 @@ public class UserOrderDto {
     private Set<ProductDto> products;
     private String phoneNumber;
     private String address;
+    private int totalElements;
 }

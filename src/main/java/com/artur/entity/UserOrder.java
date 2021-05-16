@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -34,7 +36,7 @@ public class UserOrder extends AbstractEntity{
             CascadeType.PERSIST,
             CascadeType.MERGE})
     @JoinTable(name = "order_product", joinColumns = @JoinColumn(name = "orders_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "products_id" , referencedColumnName = "id"))
-    private Set<Product> products;
+    private List<Product> products = new ArrayList<>();
 
 
     @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
@@ -46,4 +48,13 @@ public class UserOrder extends AbstractEntity{
     public UserOrder(Account account) {
         this.setAccount(account);
     }
+
+    public void addProduct(Product product){
+        products.add(product);
+    }
+
+    public void deleteProduct(Product product){
+        products.remove(product);
+    }
+
 }

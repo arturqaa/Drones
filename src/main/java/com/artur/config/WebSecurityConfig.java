@@ -56,6 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/users", "/orders", "/users/*/active_order").permitAll()
                 .antMatchers(HttpMethod.POST, SING_UP_URL ,"/create_product").permitAll()
                 .antMatchers(HttpMethod.PUT, "/users/*/add_product/*").permitAll()
+                .antMatchers(HttpMethod.PUT, "/users/*/delete_product/*").permitAll()
                 .antMatchers(
                         "/**/*.png",
                         "/**/*.gif",
@@ -68,7 +69,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(HttpMethod.GET, "/user/savePassword").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers(HttpMethod.GET, "/users").hasAnyAuthority("ADMIN")
-                .antMatchers(HttpMethod.DELETE, "/users/*/delete_product").hasAnyAuthority("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

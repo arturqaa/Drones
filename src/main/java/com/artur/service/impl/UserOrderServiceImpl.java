@@ -9,6 +9,7 @@ import com.artur.repo.StatusRepository;
 import com.artur.repo.AccountRepository;
 import com.artur.repo.specification.OrderSpecification;
 import com.artur.service.UserOrderService;
+import com.artur.service.dto.ProductDto;
 import com.artur.service.dto.UserOrderDto;
 import com.artur.service.mapper.UserOrderMapper;
 import com.artur.exception.ResourceNotFoundException;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -61,12 +63,12 @@ public class UserOrderServiceImpl implements UserOrderService {
     public Page<UserOrderDto> getAllOrdersByUserId(Long userId, OrderSpecification orderSpecification, Pageable pageable) {
         orderSpecification.setAccountId(userId);
         Page<UserOrder> ordersPage = userOrderRepository.findAll(orderSpecification, pageable);
-        for(UserOrder userOrder : ordersPage){
-            Set<Product> products = userOrder.getProducts();
-            for(Product product: products){
-                productMapper.toDto(product);
-            }
-        }
+//        for(UserOrder userOrder : ordersPage){
+//            Set<Product> products = userOrder.getProducts();
+//            for(Product product: products){
+//                productMapper.toDto(product);
+//            }
+//        }
         return ordersPage.map(userOrderMapper::toDto);
     }
 
@@ -83,7 +85,18 @@ public class UserOrderServiceImpl implements UserOrderService {
     public UserOrderDto getActiveOrderForUser(Long userId){
         Status statusEntity = statusRepository.findByStatusName(StatusType.ACTIVE).orElseThrow(
                 () -> new ResourceNotFoundException("Status order not found."));
-        Optional<UserOrder> orders = userOrderRepository.findAllByStatusAndAccountId(statusEntity, userId);
-        return userOrderMapper.toDto(orders.get());
+        Account account = accountRepository.findById(userId).get();
+        UserOrder order = userOrderRepository.findAllByStatusAndAccount(statusEntity, account).get();
+        UserOrderDto userOrderDto = userOrderMapper.toDto(order);
+        userOrderDto.setTotalElements(userOrderDto.getProducts().size());
+        return userOrderDto;
+    }
+
+    private Set<ProductDto> productToProductDTO(Set<Product> products) {
+        Set<ProductDto> setProductDTOs = new HashSet<>();
+        for(Product product : products){
+            setProductDTOs.add(productMapper.toDto(product));
+        }
+        return setProductDTOs;
     }
 }

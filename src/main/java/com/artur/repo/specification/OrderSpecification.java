@@ -29,7 +29,7 @@ public class OrderSpecification implements Specification<UserOrder> {
 
         if (Objects.nonNull(accountId)){
             var userQuery = getAccountQuery(query, builder);
-            predicate = builder.and(predicate, builder.equal(root.join("user"), userQuery));
+            predicate = builder.and(predicate, builder.equal(root.join("account"), userQuery));
         }
         return predicate;
     }
