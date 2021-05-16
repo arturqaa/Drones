@@ -47,12 +47,12 @@ public class UserOrderController {
     }
 
     @GetMapping("/users/{userId}/active_order")
-    public ResponseEntity<UserOrderDto> getActiveOrderForUser(@PathVariable final Long userId, OrderSpecification orderSpecification, @PageableDefault Pageable pageable, final Authentication auth){
-        var principal = (UserPrincipal)auth.getPrincipal();
-        if (!principal.getId().equals(userId)){
-            throw new ForbiddenException();
-        }
-        return ResponseEntity.ok().body(userOrderService.getActiveOrderForUser(userId, orderSpecification, pageable));
+    public ResponseEntity<UserOrderDto> getActiveOrderForUser(@PathVariable final Long userId, final Authentication auth){
+//        var principal = (UserPrincipal)auth.getPrincipal();
+//        if (!principal.getId().equals(userId)){
+//            throw new ForbiddenException();
+//        }
+        return ResponseEntity.ok().body(userOrderService.getActiveOrderForUser(userId));
     }
 
 }

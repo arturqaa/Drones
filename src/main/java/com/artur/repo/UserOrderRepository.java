@@ -1,5 +1,6 @@
 package com.artur.repo;
 
+import com.artur.entity.Status;
 import com.artur.entity.UserOrder;
 import com.artur.types.StatusType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,5 +12,6 @@ public interface UserOrderRepository extends JpaRepository<UserOrder,Long>, JpaS
 
     Optional<UserOrder> findAllByAccountId(Long id);
 
-    Optional<UserOrder> findAllByStatusAndAccountId(StatusType statusType, Long id);
+    Optional<UserOrder> findAllByStatusAndAccountId(Status status, Long id);
+
 }

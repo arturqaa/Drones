@@ -13,7 +13,7 @@ public interface UserOrderService {
 
     Page<UserOrderDto> getAllOrdersByUserId(Long userId, OrderSpecification orderSpecification, Pageable pageable);
 
-    UserOrderDto getActiveOrderForUser(Long userId, OrderSpecification orderSpecification, Pageable pageable);
+    UserOrderDto getActiveOrderForUser(Long userId);
 
     void createOrderForUser(Account account);
 }

@@ -109,7 +109,7 @@
             </column>
             <column name="picture_name" type="varchar(50)" remarks="Picture name"/>
             <column name="picture_type" type="varchar(20)" remarks="Picture type"/>
-            <column name="picByte" type="bytea" remarks="Picture bytes"/>
+            <column name="pic_byte" type="bytea" remarks="Picture bytes"/>
             <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
             <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
         </createTable>

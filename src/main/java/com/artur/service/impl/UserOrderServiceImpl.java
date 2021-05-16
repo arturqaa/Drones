@@ -20,11 +20,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
 @Service
-public class UserUserOrderServiceImpl implements UserOrderService {
+public class UserOrderServiceImpl implements UserOrderService {
 
     private final UserOrderMapper userOrderMapper;
     private final UserOrderRepository userOrderRepository;
@@ -33,7 +34,7 @@ public class UserUserOrderServiceImpl implements UserOrderService {
     private final ProductMapper productMapper;
     private static final Long ZERO = 0L;
 
-    public UserUserOrderServiceImpl(UserOrderMapper userOrderMapper, UserOrderRepository userOrderRepository, AccountRepository accountRepository, StatusRepository statusRepository, ProductMapper productMapper) {
+    public UserOrderServiceImpl(UserOrderMapper userOrderMapper, UserOrderRepository userOrderRepository, AccountRepository accountRepository, StatusRepository statusRepository, ProductMapper productMapper) {
         this.userOrderMapper = userOrderMapper;
         this.userOrderRepository = userOrderRepository;
         this.accountRepository = accountRepository;
@@ -58,7 +59,7 @@ public class UserUserOrderServiceImpl implements UserOrderService {
 
     @Override
     public Page<UserOrderDto> getAllOrdersByUserId(Long userId, OrderSpecification orderSpecification, Pageable pageable) {
-        orderSpecification.setUserId(userId);
+        orderSpecification.setAccountId(userId);
         Page<UserOrder> ordersPage = userOrderRepository.findAll(orderSpecification, pageable);
         for(UserOrder userOrder : ordersPage){
             Set<Product> products = userOrder.getProducts();
@@ -79,12 +80,10 @@ public class UserUserOrderServiceImpl implements UserOrderService {
         userOrderRepository.save(userOrderEntity);
     }
 
-    public UserOrderDto getActiveOrderForUser(Long userId, OrderSpecification orderSpecification, Pageable pageable){
-        orderSpecification.setUserId(userId);
-        Page<UserOrder> ordersPage = userOrderRepository.findAll(orderSpecification, pageable);
+    public UserOrderDto getActiveOrderForUser(Long userId){
         Status statusEntity = statusRepository.findByStatusName(StatusType.ACTIVE).orElseThrow(
                 () -> new ResourceNotFoundException("Status order not found."));
-        UserOrder activeUserOrder = ordersPage.stream().filter(order -> (order.getStatus()).equals(statusEntity)).findFirst().get();
-        return userOrderMapper.toDto(activeUserOrder);
+        Optional<UserOrder> orders = userOrderRepository.findAllByStatusAndAccountId(statusEntity, userId);
+        return userOrderMapper.toDto(orders.get());
     }
 }

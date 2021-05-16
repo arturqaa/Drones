@@ -90,9 +90,9 @@ public class ProductServiceImpl implements ProductService {
     public void addProductInOrder(Long userId, Long productId) {
         UserOrder userOrder = getActiveOrderByUserId(userId);
         Product product = productRepository.findById(productId).get();
-        System.out.println(userOrder.getAmount() + product.getPrice());
         userOrder.setAmount(userOrder.getAmount() + product.getPrice());
         userOrder.addProduct(product);
+        userOrderRepository.save(userOrder);
     }
 
     @Override
@@ -101,11 +101,11 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId).get();
         userOrder.setAmount(userOrder.getAmount() - product.getPrice());
         userOrder.removeProduct(product);
+        userOrderRepository.save(userOrder);
     }
 
     public UserOrder getActiveOrderByUserId(Long userId){
         Optional<UserOrder> ordersByUserId = userOrderRepository.findAllByAccountId(userId);
-        System.out.println(ordersByUserId);
         Status statusEntity = statusRepository.findByStatusName(StatusType.ACTIVE).orElseThrow(
                 () -> new ResourceNotFoundException("Status order not found."));
         return ordersByUserId.stream().filter(order -> (order.getStatus()).equals(statusEntity)).findFirst().get();

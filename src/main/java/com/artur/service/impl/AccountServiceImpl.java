@@ -40,10 +40,10 @@ public class AccountServiceImpl implements AccountService {
     private final VerificationTokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
-    private final UserUserOrderServiceImpl orderService;
+    private final UserOrderServiceImpl orderService;
     private final UserOrderMapper userOrderMapper;
 
-    public AccountServiceImpl(AccountRepository accountRepository, AccountMapper accountMapper, ApplicationEventPublisher eventPublisher, VerificationTokenRepository tokenRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, UserUserOrderServiceImpl orderService, UserOrderMapper userOrderMapper) {
+    public AccountServiceImpl(AccountRepository accountRepository, AccountMapper accountMapper, ApplicationEventPublisher eventPublisher, VerificationTokenRepository tokenRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository, UserOrderServiceImpl orderService, UserOrderMapper userOrderMapper) {
         this.accountRepository = accountRepository;
         this.accountMapper = accountMapper;
         this.eventPublisher = eventPublisher;

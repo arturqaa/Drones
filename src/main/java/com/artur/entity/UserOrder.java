@@ -45,14 +45,18 @@ public class UserOrder extends AbstractEntity{
     @JoinColumn(name = "status_id")
     private Status status;
 
+    public UserOrder(){}
+
     public UserOrder(Account account) {
         this.setAccount(account);
     }
 
     public void addProduct(Product product){
         this.products.add(product);
+        product.getUserOrders().add(this);
     }
     public void removeProduct(Product product){
         this.products.remove(product);
+        product.getUserOrders().remove(this);
     }
 }

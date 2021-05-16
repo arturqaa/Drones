@@ -17,11 +17,11 @@ public class Picture extends AbstractEntity{
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "product_id_seq")
     @SequenceGenerator(name = "product_id_seq", sequenceName = "product_id_seq", allocationSize = 1)
     private Long id;
-    @Column(name = "name")
+    @Column(name = "picture_name")
     private String name;
-    @Column(name = "type")
+    @Column(name = "picture_type")
     private String type;
-    @Column(name = "picByte", length = 1000)
+    @Column(name = "pic_byte", length = 1000)
     private byte[] picByte;
 
     public Picture(String name, String type, byte[] picByte) {

@@ -52,10 +52,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, CONFIRM_URL, "/user/resetPassword*",
-                        "/user/changePassword*", "/*").permitAll()
-                .antMatchers(HttpMethod.GET, "/users").permitAll()
+                        "/user/changePassword*", "/*", "/users/*/orders").permitAll()
+                .antMatchers(HttpMethod.GET, "/users", "/orders", "/users/*/active_order").permitAll()
                 .antMatchers(HttpMethod.POST, SING_UP_URL ,"/create_product").permitAll()
-                .antMatchers(HttpMethod.PUT, "/users/*/add_product").permitAll()
+                .antMatchers(HttpMethod.PUT, "/users/*/add_product/*").permitAll()
                 .antMatchers(
                         "/**/*.png",
                         "/**/*.gif",
@@ -66,8 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.js",
                         "/api-docs/**")
                 .permitAll()
-                .antMatchers(HttpMethod.GET, "/users/*",
-                        "/users/*/orders", "/user/savePassword").hasAnyAuthority("USER", "ADMIN")
+                .antMatchers(HttpMethod.GET, "/user/savePassword").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers(HttpMethod.GET, "/users").hasAnyAuthority("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/users/*/delete_product").hasAnyAuthority("ADMIN")
                 .anyRequest()
