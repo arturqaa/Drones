@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.2.xsd
+        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.2.xsd">
+    <changeSet id="20210119-MB1" author="Artur">
+
+        <createTable tableName="account" remarks="accounts of all users">
+            <column name="id" type="bigint" autoIncrement="true" remarks="Unique identificator">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_account"/>
+            </column>
+            <column name="first_name" type="varchar(50)" remarks="First name of account"/>
+            <column name="last_name" type="varchar(50)" remarks="Last name of account"/>
+            <column name="login" type="varchar(100)" remarks="Login of account"/>
+            <column name="email" type="varchar(100)" remarks="Email of account"/>
+            <column name="password" type="text" remarks="Password of account"/>
+            <column name="enabled" type="boolean" remarks="Enable account"/>
+            <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
+            <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
+        </createTable>
+
+        <createTable tableName="verification_token" remarks="Verification tokens of users">
+            <column name="id" type="bigint" autoIncrement="true" remarks="Unique identificator">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_verification_token"/>
+            </column>
+            <column name="expiry_date" type="date" remarks="Date create token"/>
+            <column name="token" type="text" remarks="Token of account"/>
+            <column name="account_id" type="bigint" remarks="Foreign key to account">
+                <constraints foreignKeyName="fk_account_id" references="account(id)"/>
+            </column>
+            <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
+            <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
+        </createTable>
+
+        <createTable tableName="status" remarks="Status of orders">
+            <column name="id" type="bigint"  autoIncrement="true" remarks="Unique identificator">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_status"/>
+            </column>
+            <column name="status_name" type="varchar(20)" remarks="Type of role"/>
+            <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
+            <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
+        </createTable>
+        <insert tableName="status">
+            <column name="status_name" value="ACCEPTED"/>
+            <column name="created_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="status">
+            <column name="status_name" value="ACTIVE"/>
+            <column name="created_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+
+        <createTable tableName="user_order" remarks="Orders of users">
+            <column name="id" type="bigint" autoIncrement="true" remarks="Unique identificator">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_order"/>
+            </column>
+            <column name="amount" type="bigint" remarks="Amount of userOrder"/>
+            <column name="address" type="varchar(50)" remarks="Address for userOrder"/>
+            <column name="phone_number" type="varchar(50)" remarks="Phone number for userOrder"/>
+            <column name="account_id" type="bigint" remarks="Foreign key to account">
+                <constraints foreignKeyName="fk_account_id" references="account(id)"/>
+            </column>
+            <column name="status_id" type="bigint" remarks="Foreign key to status">
+                <constraints foreignKeyName="fk_status_id" references="status(id)"/>
+            </column>
+            <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
+            <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
+        </createTable>
+
+        <createTable tableName="category" remarks="Category of products">
+            <column name="id" type="bigint"  autoIncrement="true" remarks="Unique identificator">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_category"/>
+            </column>
+            <column name="category_name" type="varchar(20)" remarks="Type of role"/>
+            <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
+            <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
+        </createTable>
+        <insert tableName="category">
+            <column name="category_name" value="DRONES"/>
+            <column name="created_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="category">
+            <column name="category_name" value="RACER_DRONES"/>
+            <column name="created_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="category">
+            <column name="category_name" value="ACTION_CAMERAS"/>
+            <column name="created_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="category">
+            <column name="category_name" value="ACCESSORIES"/>
+            <column name="created_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+
+
+
+        <createTable tableName="picture" remarks="Pictures">
+            <column name="id" type="bigint"  autoIncrement="true" remarks="Unique identificator">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_picture"/>
+            </column>
+            <column name="picture_name" type="varchar(50)" remarks="Picture name"/>
+            <column name="picture_type" type="varchar(20)" remarks="Picture type"/>
+            <column name="picByte" type="bytea" remarks="Picture bytes"/>
+            <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
+            <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
+        </createTable>
+
+        <createTable tableName="product" remarks="Message of ad">
+            <column name="id" type="bigint" autoIncrement="true" remarks="Unique identificator">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_massage"/>
+            </column>
+            <column name="title" type="varchar(50)" remarks="title of product"/>
+            <column name="description" type="varchar(500)" remarks="Description of product"/>
+            <column name="price" type="bigint" remarks="product price"/>
+            <column name="category_id" type="bigint" remarks="Foreign key to category">
+                <constraints foreignKeyName="fk_category_id" references="category(id)"/>
+            </column>
+            <column name="picture_id" type="bigint" remarks="Foreign key to picture">
+                <constraints foreignKeyName="fk_picture_id" references="picture(id)"/>
+            </column>
+            <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
+            <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
+        </createTable>
+
+        <createTable tableName="order_product" remarks="Pictures">
+            <column name="order_id" type="bigint" remarks="Foreign key to userOrder">
+                <constraints foreignKeyName="fk_order_id" references="user_order(id)"/>
+            </column>
+            <column name="product_id" type="bigint" remarks="Foreign key to product">
+                <constraints foreignKeyName="fk_product_id" references="product(id)"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+    <changeSet id="2020224-MB1" author="Artur">
+        <createTable tableName="role" remarks="Role of account">
+            <column name="id" type="bigint"  autoIncrement="true" remarks="Unique identificator">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_role"/>
+            </column>
+            <column name="role_name" type="varchar(20)" remarks="Type of role"/>
+            <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
+            <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
+        </createTable>
+        <insert tableName="role">
+            <column name="role_name" value="USER"/>
+            <column name="created_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="role">
+            <column name="role_name" value="ADMIN"/>
+            <column name="created_date" valueComputed="CURRENT_TIMESTAMP"/>
+            <column name="modified_date" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <addColumn tableName="account">
+            <column name="role_id" type="bigint" remarks="Foreign key to role">
+                <constraints foreignKeyName="fk_role_id" references="role(id)"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="2020305-MB1" author="Artur">
+      <update catalogName="liquibase"
+              schemaName="public"
+              tableName="account">
+          <column name="role_id"  valueComputed="(SELECT id FROM role WHERE role_name='ADMIN')"/>
+          <where>email='pofigist071@mail.ru'</where>
+      </update>
+    </changeSet>
+</databaseChangeLog>
