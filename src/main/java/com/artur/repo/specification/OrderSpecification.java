@@ -14,6 +14,7 @@ public class OrderSpecification implements Specification<UserOrder> {
     public OrderSpecification(Long userId) {
         this.userId = userId;
     }
+
     private Subquery<Account> getUserQuery(final CriteriaQuery<?> query, final CriteriaBuilder builder) {
         var subQuery = query.subquery(Account.class);
         var subRoot = subQuery.from(Account.class);

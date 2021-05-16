@@ -44,7 +44,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductDto> getAllProductsByCategory(CategoryType categoryType, Pageable pageable) {
-        Page<Product> productPage = productRepository.findAllByCategory(categoryType, pageable);
+        Category categoryEntity = categoryRepository.findByCategoryName(categoryType).orElseThrow(
+                () -> new ResourceNotFoundException("Status order not found."));
+        Page<Product> productPage = productRepository.findAllByCategory(categoryEntity, pageable);
         return productPage.map(productMapper::toDto);
     }
 
@@ -88,6 +90,7 @@ public class ProductServiceImpl implements ProductService {
     public void addProductInOrder(Long userId, Long productId) {
         UserOrder userOrder = getActiveOrderByUserId(userId);
         Product product = productRepository.findById(productId).get();
+        System.out.println(userOrder.getAmount() + product.getPrice());
         userOrder.setAmount(userOrder.getAmount() + product.getPrice());
         userOrder.addProduct(product);
     }
@@ -102,6 +105,7 @@ public class ProductServiceImpl implements ProductService {
 
     public UserOrder getActiveOrderByUserId(Long userId){
         Optional<UserOrder> ordersByUserId = userOrderRepository.findAllByAccountId(userId);
+        System.out.println(ordersByUserId);
         Status statusEntity = statusRepository.findByStatusName(StatusType.ACTIVE).orElseThrow(
                 () -> new ResourceNotFoundException("Status order not found."));
         return ordersByUserId.stream().filter(order -> (order.getStatus()).equals(statusEntity)).findFirst().get();

@@ -26,7 +26,7 @@ public class SendNewPasswordListener implements ApplicationListener<com.artur.se
         Account account = event.getAccount();
 
         String recipientAddress = account.getEmail();
-        String subject = "New password for Plushkin";
+        String subject = "New password for Drones";
 
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(recipientAddress);
