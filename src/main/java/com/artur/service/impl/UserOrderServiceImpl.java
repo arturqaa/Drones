@@ -54,8 +54,10 @@ public class UserOrderServiceImpl implements UserOrderService {
     }
 
     @Override
-    public Page<UserOrderDto> getAllOrders(OrderSpecification orderSpecification, Pageable pageable) {
-        Page<UserOrder> ordersPage = userOrderRepository.findAll(orderSpecification, pageable);
+    public Page<UserOrderDto> getAllOrders(Pageable pageable) {
+        Status statusEntity = statusRepository.findByStatusName(StatusType.ACCEPTED).orElseThrow(
+                () -> new ResourceNotFoundException("Status not found."));
+        Page<UserOrder> ordersPage = userOrderRepository.findAllByStatus(statusEntity, pageable);
         return ordersPage.map(userOrderMapper::toDto);
     }
 

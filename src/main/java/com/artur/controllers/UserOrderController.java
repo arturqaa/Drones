@@ -33,8 +33,8 @@ public class UserOrderController {
     }
 
     @GetMapping("/orders")
-    public ResponseEntity<Page<UserOrderDto>> getAllOrders(OrderSpecification orderSpecification, @PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable){
-        return ResponseEntity.ok().body(userOrderService.getAllOrders(orderSpecification, pageable));
+    public ResponseEntity<Page<UserOrderDto>> getAllOrders(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable){
+        return ResponseEntity.ok().body(userOrderService.getAllOrders(pageable));
     }
 
     @GetMapping("/users/{userId}/orders")

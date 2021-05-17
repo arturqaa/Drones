@@ -9,7 +9,7 @@ import org.springframework.data.domain.Pageable;
 public interface UserOrderService {
     UserOrderDto crateOrderByUserId(Long id, UserOrderDto userOrderDto);
 
-    Page<UserOrderDto> getAllOrders(OrderSpecification orderSpecification, Pageable pageable);
+    Page<UserOrderDto> getAllOrders(Pageable pageable);
 
     Page<UserOrderDto> getAllOrdersByUserId(Long userId, OrderSpecification orderSpecification, Pageable pageable);
 
