@@ -2,14 +2,18 @@ package com.artur.controllers;
 
 import com.artur.service.ProductService;
 import com.artur.service.dto.ProductDto;
+import com.artur.service.dto.ProductPhotoDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 public class ProductController {
@@ -19,26 +23,21 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/products")
-    public ResponseEntity<Page<ProductDto>> getAllProducts(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok().body(productService.getAllProducts(pageable));
-    }
-
-    @GetMapping("/drones")
-    public ResponseEntity<Page<ProductDto>> getAllProductsByCategoryDrones(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
+    @GetMapping(value = "/drones", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE})
+    public ResponseEntity<List<ProductPhotoDto>> getAllProductsByCategoryDrones(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) throws IOException {
         return ResponseEntity.ok().body(productService.getAllProductsByCategoryDrones(pageable));
     }
 
-    @GetMapping("/action_cameras")
-    public ResponseEntity<Page<ProductDto>> getAllProductsByCategoryActionCameras(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
+    @GetMapping(value = "/action_cameras", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE})
+    public ResponseEntity<List<ProductPhotoDto>> getAllProductsByCategoryActionCameras(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) throws IOException {
         return ResponseEntity.ok().body(productService.getAllProductsByCategoryActionCameras(pageable));
     }
-    @GetMapping("/accessories")
-    public ResponseEntity<Page<ProductDto>> getAllProductsByCategoryAccessories(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
+    @GetMapping(value = "/accessories", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE})
+    public ResponseEntity<List<ProductPhotoDto>> getAllProductsByCategoryAccessories(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) throws IOException {
         return ResponseEntity.ok().body(productService.getAllProductsByCategoryAccessories(pageable));
     }
-    @GetMapping("/racer_drones")
-    public ResponseEntity<Page<ProductDto>> getAllProductsByCategoryRacerDrones(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) {
+    @GetMapping(value = "/racer_drones", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE})
+    public ResponseEntity<List<ProductPhotoDto>> getAllProductsByCategoryRacerDrones(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) throws IOException {
         return ResponseEntity.ok().body(productService.getAllProductsByCategoryRacerDrones(pageable));
     }
 
@@ -48,8 +47,13 @@ public class ProductController {
     }
 
     @PostMapping("/create_product")
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) throws IOException {
-        productService.createProduct(productDto);
+    public ResponseEntity<Long> createProduct(@RequestBody ProductDto productDto) {
+        return ResponseEntity.ok().body(productService.createProduct(productDto));
+    }
+
+    @PutMapping(value = "/product/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> addPictureInProduct(@PathVariable Long productId, @ModelAttribute MultipartFile file) throws IOException {
+        productService.addPictureInProduct(productId, file);
         return ResponseEntity.ok().build();
     }
 
@@ -63,5 +67,10 @@ public class ProductController {
     public ResponseEntity<Void> deleteProductFromOrder(@PathVariable Long id, @PathVariable Long productId){
         productService.deleteProductFromOrder(id, productId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(value = "/products", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.IMAGE_JPEG_VALUE})
+    public ResponseEntity<List<ProductPhotoDto>> getAllProducts(@PageableDefault(sort = {"createdDate"}, direction = Sort.Direction.DESC) Pageable pageable) throws IOException {
+        return ResponseEntity.ok().body(productService.getAllProducts(pageable));
     }
 }

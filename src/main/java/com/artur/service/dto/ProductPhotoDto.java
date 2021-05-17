@@ -2,13 +2,12 @@ package com.artur.service.dto;
 
 import com.artur.types.CategoryType;
 import lombok.Data;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class ProductDto {
+public class ProductPhotoDto {
     @NotNull
     @NotEmpty
     private Long id;
@@ -20,5 +19,5 @@ public class ProductDto {
     @NotEmpty
     private Long price;
     private CategoryType category;
-    private MultipartFile photo;
+    private byte[] photo;
 }

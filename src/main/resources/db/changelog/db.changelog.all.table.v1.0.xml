@@ -102,21 +102,9 @@
         </insert>
 
 
-
-        <createTable tableName="picture" remarks="Pictures">
-            <column name="id" type="bigint"  autoIncrement="true" remarks="Unique identificator">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_picture"/>
-            </column>
-            <column name="picture_name" type="varchar(50)" remarks="Picture name"/>
-            <column name="picture_type" type="varchar(20)" remarks="Picture type"/>
-            <column name="pic_byte" type="bytea" remarks="Picture bytes"/>
-            <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
-            <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
-        </createTable>
-
-        <createTable tableName="product" remarks="Message of ad">
+        <createTable tableName="product" remarks="Products">
             <column name="id" type="bigint" autoIncrement="true" remarks="Unique identificator">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_massage"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_product"/>
             </column>
             <column name="title" type="varchar(50)" remarks="title of product"/>
             <column name="description" type="varchar(500)" remarks="Description of product"/>
@@ -124,14 +112,11 @@
             <column name="category_id" type="bigint" remarks="Foreign key to category">
                 <constraints foreignKeyName="fk_category_id" references="category(id)"/>
             </column>
-            <column name="picture_id" type="bigint" remarks="Foreign key to picture">
-                <constraints foreignKeyName="fk_picture_id" references="picture(id)"/>
-            </column>
             <column name="modified_date" type="datetime" remarks="date update info" autoIncrement="false"/>
             <column name="created_date" type="datetime" remarks="date create info" autoIncrement="false"/>
         </createTable>
 
-        <createTable tableName="order_product" remarks="Pictures">
+        <createTable tableName="order_product" remarks="Products in orders">
             <column name="orders_id" type="bigint" remarks="Foreign key to userOrder">
                 <constraints foreignKeyName="fk_order_id" references="user_order(id)"/>
             </column>

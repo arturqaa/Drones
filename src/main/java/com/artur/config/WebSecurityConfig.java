@@ -53,9 +53,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, CONFIRM_URL, "/user/resetPassword*",
                         "/user/changePassword*", "/*", "/users/*/orders").permitAll()
-                .antMatchers(HttpMethod.GET, "/users", "/orders", "/users/*/active_order").permitAll()
+                .antMatchers(HttpMethod.GET, "/users", "/orders", "/users/*/active_order", "/products").permitAll()
                 .antMatchers(HttpMethod.POST, SING_UP_URL ,"/create_product", "/confirm_order").permitAll()
-                .antMatchers(HttpMethod.PUT, "/users/*/add_product/*").permitAll()
+                .antMatchers(HttpMethod.PUT, "/users/*/add_product/*", "/product/*").permitAll()
                 .antMatchers(HttpMethod.PUT, "/users/*/delete_product/*").permitAll()
                 .antMatchers(
                         "/**/*.png",

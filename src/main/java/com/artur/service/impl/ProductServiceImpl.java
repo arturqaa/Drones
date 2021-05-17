@@ -8,20 +8,24 @@ import com.artur.repo.ProductRepository;
 import com.artur.repo.StatusRepository;
 import com.artur.service.ProductService;
 import com.artur.service.dto.ProductDto;
+import com.artur.service.dto.ProductPhotoDto;
 import com.artur.service.mapper.ProductMapper;
-import com.artur.types.RoleType;
+import com.artur.service.mapper.ProductPhotoMapper;
 import com.artur.types.StatusType;
+import com.artur.utils.FileDownlandUtil;
 import com.artur.utils.FileUploadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import com.artur.types.CategoryType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Slf4j
 @Service
@@ -31,46 +35,43 @@ public class ProductServiceImpl implements ProductService {
     private final UserOrderRepository userOrderRepository;
     private final StatusRepository statusRepository;
     private final CategoryRepository categoryRepository;
+    private final ProductPhotoMapper productPhotoMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper, UserOrderRepository userOrderRepository, StatusRepository statusRepository, CategoryRepository categoryRepository) {
+    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper, UserOrderRepository userOrderRepository, StatusRepository statusRepository, CategoryRepository categoryRepository, ProductPhotoMapper productPhotoMapper) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.userOrderRepository = userOrderRepository;
         this.statusRepository = statusRepository;
         this.categoryRepository = categoryRepository;
+        this.productPhotoMapper = productPhotoMapper;
     }
 
-    @Override
-    public Page<ProductDto> getAllProducts(Pageable pageable) {
-        Page<Product> productPage = productRepository.findAll(pageable);
-        return productPage.map(productMapper::toDto);
-    }
 
     @Override
-    public Page<ProductDto> getAllProductsByCategory(CategoryType categoryType, Pageable pageable) {
+    public List<ProductPhotoDto> getAllProductsByCategory(CategoryType categoryType, Pageable pageable) throws IOException {
         Category categoryEntity = categoryRepository.findByCategoryName(categoryType).orElseThrow(
                 () -> new ResourceNotFoundException("Status order not found."));
         Page<Product> productPage = productRepository.findAllByCategory(categoryEntity, pageable);
-        return productPage.map(productMapper::toDto);
+        return pageProductsToDto(productPage);
     }
 
     @Override
-    public Page<ProductDto> getAllProductsByCategoryDrones(Pageable pageable) {
+    public List<ProductPhotoDto> getAllProductsByCategoryDrones(Pageable pageable) throws IOException {
         return getAllProductsByCategory(CategoryType.DRONES, pageable);
     }
 
     @Override
-    public Page<ProductDto> getAllProductsByCategoryActionCameras(Pageable pageable) {
+    public List<ProductPhotoDto> getAllProductsByCategoryActionCameras(Pageable pageable) throws IOException {
         return getAllProductsByCategory(CategoryType.ACTION_CAMERAS, pageable);
     }
 
     @Override
-    public Page<ProductDto> getAllProductsByCategoryAccessories(Pageable pageable) {
+    public List<ProductPhotoDto> getAllProductsByCategoryAccessories(Pageable pageable) throws IOException {
         return getAllProductsByCategory(CategoryType.ACCESSORIES, pageable);
     }
 
     @Override
-    public Page<ProductDto> getAllProductsByCategoryRacerDrones(Pageable pageable) {
+    public List<ProductPhotoDto> getAllProductsByCategoryRacerDrones(Pageable pageable) throws IOException {
         return getAllProductsByCategory(CategoryType.RACER_DRONES, pageable);
     }
 
@@ -80,19 +81,25 @@ public class ProductServiceImpl implements ProductService {
         return productPage.map(productMapper::toDto);
     }
 
-    public void createProduct(ProductDto productDto) throws IOException {
+    public Long createProduct(ProductDto productDto) {
+        Product productEntity = productMapper.toEntity(productDto);
         CategoryType category = productDto.getCategory() == null ? CategoryType.DRONES : productDto.getCategory();
         Category categoryEntity = categoryRepository.findByCategoryName
                 (category).orElseThrow(
                 () -> new ResourceNotFoundException("Category not found."));
-        String uploadDir = null;
-        if (productDto.getPhoto() != null){
-            uploadDir = "ad-photos/" + productDto.getTitle();
-        }
-        Product productEntity = productMapper.toEntity(productDto);
         productEntity.setCategory(categoryEntity);
-        if (productDto.getPhoto() != null){
-            productEntity.setPhotoPath(FileUploadUtil.saveFile(uploadDir, productDto.getPhoto()));
+        productMapper.toDto(productRepository.save(productEntity));
+        return productEntity.getId();
+    }
+
+    public void addPictureInProduct(Long productId, MultipartFile photo) throws IOException {
+        Product productEntity = productRepository.findById(productId).get();
+        String uploadDir = null;
+        if (photo != null){
+            uploadDir = "ad-photos/" + productEntity.getTitle();
+        }
+        if (photo != null){
+            productEntity.setPhotoPath(FileUploadUtil.saveFile(uploadDir, photo));
         }
         productMapper.toDto(productRepository.save(productEntity));
     }
@@ -122,4 +129,18 @@ public class ProductServiceImpl implements ProductService {
         return ordersByUserId.stream().filter(order -> (order.getStatus()).equals(statusEntity)).findFirst().get();
     }
 
+    public List<ProductPhotoDto> getAllProducts(Pageable pageable) throws IOException {
+        Page<Product> pageProducts = productRepository.findAll(pageable);
+        return pageProductsToDto(pageProducts);
+    }
+
+    public List<ProductPhotoDto> pageProductsToDto(Page<Product> pageProducts) throws IOException {
+        List<ProductPhotoDto> productPhotoDtos = new ArrayList<>();
+        for (Product product: pageProducts){
+            ProductPhotoDto productPhotoDto = productPhotoMapper.toDto(product);
+            productPhotoDto.setPhoto(FileDownlandUtil.addFileToDto(product.getPhotoPath()));
+            productPhotoDtos.add(productPhotoDto);
+        }
+        return productPhotoDtos;
+    }
 }
