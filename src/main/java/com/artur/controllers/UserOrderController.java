@@ -55,4 +55,15 @@ public class UserOrderController {
         return ResponseEntity.ok().body(userOrderService.getActiveOrderForUser(userId));
     }
 
+    @PostMapping("/confirm_order")
+    public ResponseEntity<Void> confirmActiveOrderForUser(@RequestBody UserOrderDto userOrderDto, final Authentication auth){
+//        var principal = (UserPrincipal)auth.getPrincipal();
+//        if (!principal.getId().equals(userId)){
+//            throw new ForbiddenException();
+//        }
+        userOrderService.confirmActiveOrderForUser(userOrderDto);
+        return ResponseEntity.ok().build();
+    }
+
+
 }

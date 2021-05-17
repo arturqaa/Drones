@@ -16,4 +16,6 @@ public interface UserOrderService {
     UserOrderDto getActiveOrderForUser(Long userId);
 
     void createOrderForUser(Account account);
+
+    void confirmActiveOrderForUser(UserOrderDto userOrderDto);
 }

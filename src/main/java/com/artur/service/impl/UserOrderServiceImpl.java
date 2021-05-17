@@ -92,11 +92,14 @@ public class UserOrderServiceImpl implements UserOrderService {
         return userOrderDto;
     }
 
-    private Set<ProductDto> productToProductDTO(Set<Product> products) {
-        Set<ProductDto> setProductDTOs = new HashSet<>();
-        for(Product product : products){
-            setProductDTOs.add(productMapper.toDto(product));
-        }
-        return setProductDTOs;
+    public void confirmActiveOrderForUser(UserOrderDto userOrderDto){
+         UserOrder userOrderEntity = userOrderRepository.findById(userOrderDto.getId()).get();
+        Status statusEntity = statusRepository.findByStatusName(StatusType.ACCEPTED).orElseThrow(
+                () -> new ResourceNotFoundException("Status not found."));
+        userOrderEntity.setStatus(statusEntity);
+        userOrderEntity.setAddress(userOrderDto.getAddress());
+        userOrderEntity.setPhoneNumber(userOrderDto.getPhoneNumber());
+        createOrderForUser(userOrderEntity.getAccount());
     }
+
 }
