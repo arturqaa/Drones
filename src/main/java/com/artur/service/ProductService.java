@@ -5,6 +5,8 @@ import com.artur.types.CategoryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+
 public interface ProductService {
     Page<ProductDto> getAllProducts(Pageable pageable);
 
@@ -20,7 +22,7 @@ public interface ProductService {
 
     Page<ProductDto> getAllProductsByTitle(String title, Pageable pageable);
 
-    void createProduct(ProductDto productDto);
+    void createProduct(ProductDto productDto) throws IOException;
 
     void addProductInOrder(Long userId, Long productId);
 

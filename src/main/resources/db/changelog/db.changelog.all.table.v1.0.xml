@@ -175,4 +175,11 @@
           <where>email='pofigist071@mail.ru'</where>
       </update>
     </changeSet>
+    <changeSet id="20210516" author="Artur">
+        <addColumn tableName="product">
+            <column name="photo_path" type="varchar(200)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

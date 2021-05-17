@@ -38,4 +38,7 @@ public class Product extends AbstractEntity{
     @OneToOne
     @JoinColumn(name = "picture_id", unique = true)
     private Picture picture;
+
+    @Column(name = "photo_path")
+    private String photoPath;
 }

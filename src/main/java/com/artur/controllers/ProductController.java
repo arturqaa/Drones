@@ -9,6 +9,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 public class ProductController {
     private final ProductService productService;
@@ -46,7 +48,7 @@ public class ProductController {
     }
 
     @PostMapping("/create_product")
-    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) {
+    public ResponseEntity<ProductDto> createProduct(@RequestBody ProductDto productDto) throws IOException {
         productService.createProduct(productDto);
         return ResponseEntity.ok().build();
     }

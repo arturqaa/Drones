@@ -11,12 +11,14 @@ import com.artur.service.dto.ProductDto;
 import com.artur.service.mapper.ProductMapper;
 import com.artur.types.RoleType;
 import com.artur.types.StatusType;
+import com.artur.utils.FileUploadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import com.artur.types.CategoryType;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -78,13 +80,20 @@ public class ProductServiceImpl implements ProductService {
         return productPage.map(productMapper::toDto);
     }
 
-    public void createProduct(ProductDto productDto) {
-        Product productEntity = productMapper.toEntity(productDto);
+    public void createProduct(ProductDto productDto) throws IOException {
         CategoryType category = productDto.getCategory() == null ? CategoryType.DRONES : productDto.getCategory();
         Category categoryEntity = categoryRepository.findByCategoryName
                 (category).orElseThrow(
                 () -> new ResourceNotFoundException("Category not found."));
+        String uploadDir = null;
+        if (productDto.getPhoto() != null){
+            uploadDir = "ad-photos/" + productDto.getTitle();
+        }
+        Product productEntity = productMapper.toEntity(productDto);
         productEntity.setCategory(categoryEntity);
+        if (productDto.getPhoto() != null){
+            productEntity.setPhotoPath(FileUploadUtil.saveFile(uploadDir, productDto.getPhoto()));
+        }
         productMapper.toDto(productRepository.save(productEntity));
     }
 
