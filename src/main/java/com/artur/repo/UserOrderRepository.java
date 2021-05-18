@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface UserOrderRepository extends JpaRepository<UserOrder,Long>, JpaSpecificationExecutor<UserOrder> {
 
-    Optional<UserOrder> findAllByAccountId(Long id);
+    Optional<UserOrder> findAllByAccount(Account account);
 
     Optional<UserOrder> findAllByStatusAndAccount(Status status, Account account);
 

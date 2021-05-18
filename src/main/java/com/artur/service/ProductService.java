@@ -1,6 +1,5 @@
 package com.artur.service;
 
-import com.artur.entity.Product;
 import com.artur.service.dto.ProductDto;
 import com.artur.service.dto.ProductPhotoDto;
 import com.artur.types.CategoryType;

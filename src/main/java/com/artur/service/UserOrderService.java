@@ -6,6 +6,8 @@ import com.artur.service.dto.UserOrderDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+
 public interface UserOrderService {
     UserOrderDto crateOrderByUserId(Long id, UserOrderDto userOrderDto);
 
@@ -13,7 +15,7 @@ public interface UserOrderService {
 
     Page<UserOrderDto> getAllOrdersByUserId(Long userId, OrderSpecification orderSpecification, Pageable pageable);
 
-    UserOrderDto getActiveOrderForUser(Long userId);
+    UserOrderDto getActiveOrderForUser(Long userId) throws IOException;
 
     void createOrderForUser(Account account);
 

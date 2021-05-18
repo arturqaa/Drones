@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -29,7 +30,7 @@ public class Product extends AbstractEntity{
 
     @ManyToMany
     @JoinTable(name = "order_product", joinColumns = @JoinColumn(name = "products_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "orders_id" , referencedColumnName = "id"))
-    private Set<UserOrder> userOrders;
+    private List<UserOrder> userOrders;
 
     @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.MERGE})
     @JoinColumn(name = "category_id", unique = true)

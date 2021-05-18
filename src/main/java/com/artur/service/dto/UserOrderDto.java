@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -22,7 +23,7 @@ public class UserOrderDto {
     private Long amount;
 
     private StatusType status;
-    private Set<ProductDto> products;
+    private List<ProductPhotoDto> products;
     private String phoneNumber;
     private String address;
     private int totalElements;

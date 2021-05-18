@@ -10,20 +10,22 @@ import com.artur.repo.AccountRepository;
 import com.artur.repo.specification.OrderSpecification;
 import com.artur.service.UserOrderService;
 import com.artur.service.dto.ProductDto;
+import com.artur.service.dto.ProductPhotoDto;
 import com.artur.service.dto.UserOrderDto;
+import com.artur.service.mapper.ProductPhotoMapper;
 import com.artur.service.mapper.UserOrderMapper;
 import com.artur.exception.ResourceNotFoundException;
 import com.artur.service.mapper.ProductMapper;
 import com.artur.types.StatusType;
+import com.artur.utils.FileDownlandUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.io.IOException;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -33,15 +35,15 @@ public class UserOrderServiceImpl implements UserOrderService {
     private final UserOrderRepository userOrderRepository;
     private final AccountRepository accountRepository;
     private final StatusRepository statusRepository;
-    private final ProductMapper productMapper;
+    private final ProductPhotoMapper productPhotoMapper;
     private static final Long ZERO = 0L;
 
-    public UserOrderServiceImpl(UserOrderMapper userOrderMapper, UserOrderRepository userOrderRepository, AccountRepository accountRepository, StatusRepository statusRepository, ProductMapper productMapper) {
+    public UserOrderServiceImpl(UserOrderMapper userOrderMapper, UserOrderRepository userOrderRepository, AccountRepository accountRepository, StatusRepository statusRepository, ProductPhotoMapper productPhotoMapper) {
         this.userOrderMapper = userOrderMapper;
         this.userOrderRepository = userOrderRepository;
         this.accountRepository = accountRepository;
         this.statusRepository = statusRepository;
-        this.productMapper = productMapper;
+        this.productPhotoMapper = productPhotoMapper;
     }
 
     @Override
@@ -84,12 +86,19 @@ public class UserOrderServiceImpl implements UserOrderService {
         userOrderRepository.save(userOrderEntity);
     }
 
-    public UserOrderDto getActiveOrderForUser(Long userId){
+    public UserOrderDto getActiveOrderForUser(Long userId) throws IOException {
         Status statusEntity = statusRepository.findByStatusName(StatusType.ACTIVE).orElseThrow(
                 () -> new ResourceNotFoundException("Status order not found."));
         Account account = accountRepository.findById(userId).get();
         UserOrder order = userOrderRepository.findAllByStatusAndAccount(statusEntity, account).get();
         UserOrderDto userOrderDto = userOrderMapper.toDto(order);
+        List<ProductPhotoDto> productPhotoDtos = new ArrayList<>();
+        for(Product product: order.getProducts()){
+            ProductPhotoDto productPhotoDto = productPhotoMapper.toDto(product);
+            productPhotoDto.setPhoto(FileDownlandUtil.addFileToDto(product.getPhotoPath()));
+            productPhotoDtos.add(productPhotoDto);
+        }
+        userOrderDto.setProducts(productPhotoDtos);
         userOrderDto.setTotalElements(userOrderDto.getProducts().size());
         return userOrderDto;
     }

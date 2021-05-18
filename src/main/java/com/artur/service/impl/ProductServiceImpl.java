@@ -2,10 +2,7 @@ package com.artur.service.impl;
 
 import com.artur.entity.*;
 import com.artur.exception.ResourceNotFoundException;
-import com.artur.repo.CategoryRepository;
-import com.artur.repo.UserOrderRepository;
-import com.artur.repo.ProductRepository;
-import com.artur.repo.StatusRepository;
+import com.artur.repo.*;
 import com.artur.service.ProductService;
 import com.artur.service.dto.ProductDto;
 import com.artur.service.dto.ProductPhotoDto;
@@ -16,7 +13,6 @@ import com.artur.utils.FileDownlandUtil;
 import com.artur.utils.FileUploadUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import com.artur.types.CategoryType;
 import org.springframework.stereotype.Service;
@@ -36,14 +32,16 @@ public class ProductServiceImpl implements ProductService {
     private final StatusRepository statusRepository;
     private final CategoryRepository categoryRepository;
     private final ProductPhotoMapper productPhotoMapper;
+    private final AccountRepository accountRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper, UserOrderRepository userOrderRepository, StatusRepository statusRepository, CategoryRepository categoryRepository, ProductPhotoMapper productPhotoMapper) {
+    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper, UserOrderRepository userOrderRepository, StatusRepository statusRepository, CategoryRepository categoryRepository, ProductPhotoMapper productPhotoMapper, AccountRepository accountRepository) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
         this.userOrderRepository = userOrderRepository;
         this.statusRepository = statusRepository;
         this.categoryRepository = categoryRepository;
         this.productPhotoMapper = productPhotoMapper;
+        this.accountRepository = accountRepository;
     }
 
 
@@ -123,10 +121,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public UserOrder getActiveOrderByUserId(Long userId){
-        Optional<UserOrder> ordersByUserId = userOrderRepository.findAllByAccountId(userId);
+        Optional<Account> account = accountRepository.findById(userId);
         Status statusEntity = statusRepository.findByStatusName(StatusType.ACTIVE).orElseThrow(
                 () -> new ResourceNotFoundException("Status order not found."));
-        return ordersByUserId.stream().filter(order -> (order.getStatus()).equals(statusEntity)).findFirst().get();
+        Optional<UserOrder> ordersByUserId = userOrderRepository.findAllByStatusAndAccount(statusEntity, account.get());
+        return ordersByUserId.get();
     }
 
     public List<ProductPhotoDto> getAllProducts(Pageable pageable) throws IOException {
